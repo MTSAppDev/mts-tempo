@@ -1,3 +1,5 @@
+const apiOrigin = (import.meta.env.VITE_API_URL || "").trim().replace(/\/+$/, "");
+const apiBase = apiOrigin.endsWith("/api") ? apiOrigin : `${apiOrigin}/api`;
 let csrfToken = "";
 let refreshing;
 export function clearSession() {
@@ -15,7 +17,7 @@ export async function api(
 ) {
   let response;
   try {
-    response = await fetch(`/api${path}`, {
+    response = await fetch(`${apiBase}${path}`, {
       method,
       credentials: "include",
       signal,

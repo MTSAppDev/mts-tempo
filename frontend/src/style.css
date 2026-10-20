@@ -1699,8 +1699,13 @@ details summary {
   color: #a5b0a7;
   margin-top: 45px;
 }
-.mobile-logout {
-  display: none;
+.header-logout {
+  display: inline-flex;
+  gap: 6px;
+  padding: 8px 10px;
+  border: 1px solid #e6ebe8;
+  border-radius: 6px;
+  white-space: nowrap;
 }
 .top-actions .avatar {
   cursor: pointer;
@@ -1752,9 +1757,6 @@ details summary {
   }
   .auth-panel > small {
     margin-top: 30px;
-  }
-  .mobile-logout {
-    display: inline-flex;
   }
   .top-actions .avatar {
     display: flex;

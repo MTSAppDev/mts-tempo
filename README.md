@@ -26,6 +26,8 @@ npm run dev
 
 Open `http://127.0.0.1:5173` and sign in with the Admin account you created. The frontend proxies `/api` to the backend on port 4000 so session cookies use the same origin. `npm run build` creates a production frontend build; `npm run preview` serves it locally with the same proxy. `API_PROXY_TARGET` overrides the backend target for local development/preview.
 
+To call a separately hosted backend, set `VITE_API_URL=https://mts-tempo.onrender.com` in `frontend/.env` or in the frontend hosting build environment. The API client appends `/api` (a URL already ending in `/api` also works). Leave it empty to use the local proxy. Restart Vite after changing this value; deployed frontends must be rebuilt and redeployed because Vite embeds it at build time. This is a public URL, so never put credentials in it. On the backend, set `CORS_ORIGINS` to the exact frontend origin and `NODE_ENV=production` for HTTPS cross-site session cookies. Set `APP_URL` to the frontend URL for invitation/reset links. Browser restrictions on third-party cookies can still affect sessions across unrelated domains.
+
 ## Included workflows
 
 - Real login, session restoration, logout, invitation acceptance, optional password changes and Admin-assisted password reset.

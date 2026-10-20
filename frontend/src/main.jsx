@@ -267,14 +267,6 @@ function Workspace({ user, signedOut }) {
               <b>{user.name}</b>
               <small>{user.role}</small>
             </div>
-            <button
-              title="Sign out"
-              aria-label="Sign out"
-              disabled={logoutBusy}
-              onClick={logout}
-            >
-              <LogOut size={17} />
-            </button>
           </div>
         </div>
       </aside>
@@ -296,12 +288,13 @@ function Workspace({ user, signedOut }) {
               {initials(user.name)}
             </button>
             <button
-              className="mobile-logout"
+              className="header-logout"
               aria-label="Sign out"
-              disabled={logoutBusy}
+              disabled={logoutBusy || working}
               onClick={logout}
             >
               <LogOut size={18} />
+              {logoutBusy ? "Signing out…" : "Sign out"}
             </button>
           </div>
         </header>

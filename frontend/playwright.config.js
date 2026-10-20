@@ -25,7 +25,7 @@ export default defineConfig({
     {
       command: "npm run build && npm run preview -- --port 5175 --strictPort",
       url: "http://127.0.0.1:5175",
-      env: { API_PROXY_TARGET: "http://127.0.0.1:4005" },
+      env: { API_PROXY_TARGET: "http://127.0.0.1:4005", VITE_API_URL: "" },
       reuseExistingServer: false,
     },
   ],
