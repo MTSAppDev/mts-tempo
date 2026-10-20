@@ -18,6 +18,12 @@ export function createApp() {
   app.use((req, res, next) => { const origin = req.get('Origin'); if (origin && !origins.has(origin)) return res.status(403).json({ error: 'Origin not allowed' }); next(); });
   app.use(cors({ origin: [...origins], credentials: true, allowedHeaders: ['Content-Type', 'X-CSRF-Token'] }));
   app.use(express.json({ limit: '1mb' })); app.use(cookieParser());
+  app.get('/health', (req, res) => {
+    res.status(200).json({
+      status: 'ok',
+      service: 'mts-timesheet-backend'
+    });
+  });
   app.use('/api', (_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
   app.use('/api', rateLimit({ windowMs: 60000, limit: 300, standardHeaders: 'draft-7', legacyHeaders: false }));
   app.get('/api/health', (_req, res) => res.status(mongoose.connection.readyState === 1 ? 200 : 503).json({ status: mongoose.connection.readyState === 1 ? 'ok' : 'unavailable', database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' }));
