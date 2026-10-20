@@ -1,0 +1,41 @@
+import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
+import { rateLimit } from 'express-rate-limit';
+import { ZodError } from 'zod';
+import { authenticate } from './security.js';
+import { authRouter } from './auth.js';
+import { catalogRouter } from './catalog.js';
+import { timesheetRouter } from './timesheets.js';
+import { reportRouter } from './reports.js';
+import { complianceRouter } from './compliance.js';
+export function createApp() {
+  const app = express(); app.disable('x-powered-by'); app.set('query parser', 'simple');
+  const origins = new Set((process.env.CORS_ORIGINS || 'http://localhost:5173,http://127.0.0.1:5173').split(',').map(s => s.trim()));
+  app.use(helmet());
+  app.use((req, res, next) => { const origin = req.get('Origin'); if (origin && !origins.has(origin)) return res.status(403).json({ error: 'Origin not allowed' }); next(); });
+  app.use(cors({ origin: [...origins], credentials: true, allowedHeaders: ['Content-Type', 'X-CSRF-Token'] }));
+  app.use(express.json({ limit: '1mb' })); app.use(cookieParser());
+  app.use('/api', (_req, res, next) => { res.set('Cache-Control', 'no-store'); next(); });
+  app.use('/api', rateLimit({ windowMs: 60000, limit: 300, standardHeaders: 'draft-7', legacyHeaders: false }));
+  app.get('/api/health', (_req, res) => res.status(mongoose.connection.readyState === 1 ? 200 : 503).json({ status: mongoose.connection.readyState === 1 ? 'ok' : 'unavailable', database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected' }));
+  app.use('/api/auth', authRouter());
+  app.use('/api', authenticate, catalogRouter());
+  app.use('/api/timesheets', timesheetRouter());
+  app.use('/api/reports', reportRouter());
+  app.use('/api/compliance', complianceRouter());
+  app.use((_req, res) => res.status(404).json({ error: 'Endpoint not found' }));
+  app.use((error, _req, res, next) => {
+    if (res.headersSent) return next(error);
+    if (error instanceof ZodError) return res.status(400).json({ error: 'Invalid request', details: error.issues.map(i => ({ path: i.path.join('.'), message: i.message })) });
+    if (error.code === 11000) return res.status(409).json({ error: 'A record with this unique value already exists' });
+    if (error.name === 'VersionError') return res.status(409).json({ error: 'Record changed. Reload and retry.' });
+    if (['ValidationError', 'CastError'].includes(error.name)) return res.status(400).json({ error: 'Invalid record', details: error.message });
+    const status = error.status || 500;
+    if (status >= 500) console.error(error);
+    res.status(status).json({ error: status >= 500 ? 'Internal server error' : error.message });
+  });
+  return app;
+}

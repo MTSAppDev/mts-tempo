@@ -1,0 +1,15 @@
+import { z } from 'zod';
+import { validDate, isMonday } from './time.js';
+export const id = z.string().regex(/^[a-f\d]{24}$/i, 'Invalid identifier');
+export const name = z.string().trim().min(1).max(160);
+export const password = z.string().min(12).max(128);
+export const email = z.string().trim().email().max(254).transform(s => s.toLowerCase());
+export const role = z.enum(['Admin', 'Manager', 'User']);
+export const version = z.number().int().nonnegative();
+export const dateString = z.string().refine(validDate, 'Invalid calendar date');
+export const weekString = z.string().refine(isMonday, 'Week must start on Monday');
+export const entry = z.object({ date: dateString, project: id, task: id, description: z.string().trim().min(1).max(2000), hours: z.number().finite().positive().refine(n => Number.isSafeInteger(Math.round(n * 100)) && Math.abs(n * 100 - Math.round(n * 100)) < 0.00001, 'Use at most two decimal places') }).strict();
+export const parse = (schema, input) => schema.parse(input);
+export const pageQuery = z.object({ page: z.coerce.number().int().min(1).default(1), limit: z.coerce.number().int().min(1).max(100).default(50), search: z.string().max(120).optional() });
+export const literalSearch = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+export { z };
