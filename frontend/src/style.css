@@ -4,7 +4,7 @@
   color: #283b37;
   background: #f6f8f7;
   font-synthesis: none;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 450;
 }
 * {
@@ -72,12 +72,12 @@ h1 {
   letter-spacing: -1.1px;
 }
 h2 {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 750;
   letter-spacing: -0.3px;
 }
 h3 {
-  font-size: 13px;
+  font-size: 15px;
 }
 p {
   color: #85918c;
@@ -130,7 +130,7 @@ p {
   background: #fafbf9;
   border: 1px solid #e7ece8;
   border-radius: 8px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .workspace > svg {
   margin-left: auto;
@@ -147,7 +147,7 @@ p {
 }
 .workspace small {
   display: block;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 1px;
   margin-top: 4px;
   color: #88948c;
@@ -156,7 +156,7 @@ p {
   margin-bottom: 24px;
 }
 .nav-section > label {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1.6px;
   color: #9da7a1;
   font-weight: 600;
@@ -171,7 +171,7 @@ p {
   border-radius: 6px;
   color: #7d8984;
   margin: 2px 0;
-  font-size: 12px;
+  font-size: 14px;
 }
 .nav-item.active {
   background: #eaf3ee;
@@ -187,7 +187,7 @@ p {
   color: #377356;
   border-radius: 5px;
   padding: 1px 6px;
-  font-size: 10px;
+  font-size: 12px;
 }
 .sidebar-bottom {
   margin-top: auto;
@@ -206,16 +206,16 @@ p {
   margin-bottom: 7px;
 }
 .tip b {
-  font-size: 10px;
+  font-size: 12px;
 }
 .tip p {
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 6px;
   color: #9b9f8b;
   line-height: 1.8;
 }
 .sidebar-bottom > .nav-item {
-  font-size: 10px;
+  font-size: 12px;
   padding: 8px;
 }
 .profile {
@@ -227,11 +227,11 @@ p {
   padding: 19px 2px;
 }
 .profile b {
-  font-size: 11px;
+  font-size: 13px;
 }
 .profile small {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   color: #9ba39d;
   margin-top: 4px;
 }
@@ -248,7 +248,7 @@ p {
   border-radius: 50%;
   background: #e9dfcf;
   color: #80694e;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 650;
   flex-shrink: 0;
   border: 2px solid #fff;
@@ -256,7 +256,7 @@ p {
 .avatar.small {
   width: 31px;
   height: 31px;
-  font-size: 10px;
+  font-size: 12px;
 }
 .main {
   margin-left: 232px;
@@ -276,7 +276,7 @@ p {
   align-items: center;
   gap: 15px;
   color: #9aa49e;
-  font-size: 11px;
+  font-size: 13px;
 }
 .breadcrumb span {
   color: #52635b;
@@ -287,14 +287,14 @@ p {
   gap: 20px;
 }
 .top-actions select {
-  font-size: 10px;
+  font-size: 12px;
   border: 1px solid #e6ebe7;
   padding: 6px;
   border-radius: 5px;
   background: #fff;
 }
 .demo-label {
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 1.5px;
   color: #9aa69e;
 }
@@ -326,19 +326,19 @@ main {
 }
 .eyebrow {
   color: #8d9b92;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 1.8px;
   font-weight: 650;
   margin-bottom: 8px;
 }
 .page-heading p {
-  font-size: 11px;
+  font-size: 13px;
   margin-top: 9px;
 }
 .button {
   border-radius: 6px;
   padding: 10px 15px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 550;
   white-space: nowrap;
   min-height: 36px;
@@ -375,7 +375,7 @@ main {
 .stat-label {
   display: flex;
   justify-content: space-between;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   color: #8a978f;
 }
@@ -393,13 +393,13 @@ main {
   height: 54px;
 }
 .stat-value > span:not(.status) {
-  font-size: 12px;
+  font-size: 14px;
   color: #a6afa9;
   font-weight: 400;
   letter-spacing: 0;
 }
 .stat-foot {
-  font-size: 9px;
+  font-size: 11px;
   color: #9aa59d;
   display: flex;
   justify-content: space-between;
@@ -452,7 +452,7 @@ main {
   background: #fbeeee;
 }
 .status.compact {
-  font-size: 10px;
+  font-size: 12px;
   padding: 5px 8px;
 }
 .timesheet {
@@ -478,15 +478,15 @@ main {
   display: flex;
 }
 .week-title h2 {
-  font-size: 14px;
+  font-size: 15px;
 }
 .week-title p {
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 4px;
 }
 .week-tag {
   display: inline-block;
-  font-size: 8px;
+  font-size: 10px;
   color: #839879;
   background: #f0f4eb;
   border-radius: 4px;
@@ -501,7 +501,7 @@ main {
 }
 .week-nav button {
   padding: 7px 9px;
-  font-size: 10px;
+  font-size: 12px;
 }
 .week-nav button + button {
   border-left: 1px solid #e4e9e4;
@@ -514,7 +514,7 @@ main {
   background: #f8faf8;
   border-top: 1px solid #eaf0e9;
   border-bottom: 1px solid #eaf0e9;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 1px;
   color: #9ba69e;
 }
@@ -529,7 +529,7 @@ main {
   padding-top: 6px;
 }
 .day-label b {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 550;
   display: flex;
   align-items: center;
@@ -537,7 +537,7 @@ main {
 }
 .day-label > span {
   display: block;
-  font-size: 10px;
+  font-size: 12px;
   color: #9ba69e;
   margin-top: 5px;
 }
@@ -546,7 +546,7 @@ main {
   background: #f3f6f2;
   color: #82927f;
   padding: 2px 5px;
-  font-size: 8px;
+  font-size: 10px;
   border-radius: 3px;
   margin-top: 11px;
 }
@@ -578,17 +578,17 @@ main {
   border-radius: 5px;
   padding: 8px 9px;
   background: #fff;
-  font-size: 10px;
+  font-size: 12px;
 }
 .project-task select + select {
-  font-size: 9px;
+  font-size: 11px;
   color: #909d94;
   border-color: #eef1ed;
   padding: 6px 9px;
   background: #fcfdfb;
 }
 .description {
-  font-size: 10px;
+  font-size: 12px;
   background: white;
   border: 1px solid #e6ebe5;
   padding: 9px 11px;
@@ -600,7 +600,7 @@ main {
   color: #b0b9b2;
 }
 .hours {
-  font-size: 11px;
+  font-size: 13px;
   width: 100%;
   border: 1px solid #e3e9e4;
   border-radius: 5px;
@@ -614,14 +614,14 @@ main {
   padding: 0;
 }
 .add-entry {
-  font-size: 9px;
+  font-size: 11px;
   color: #6d9480;
   padding: 2px 0;
   gap: 6px;
 }
 .add-entry span {
   color: #acb5ae;
-  font-size: 10px;
+  font-size: 12px;
   margin-left: 19px;
   font-weight: 400;
 }
@@ -642,11 +642,11 @@ main {
   align-items: center;
   padding: 18px 58px 18px 23px;
   background: #f9fbf8;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 550;
 }
 .week-total small {
-  font-size: 9px;
+  font-size: 11px;
   color: #a2ada3;
   font-weight: 400;
   margin-left: 10px;
@@ -658,7 +658,7 @@ main {
 }
 .week-total strong small {
   margin-left: 3px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .sheet-footer {
   display: flex;
@@ -667,7 +667,7 @@ main {
   margin-top: 20px;
 }
 .sheet-footer > span {
-  font-size: 9px;
+  font-size: 11px;
   color: #9ca79f;
   display: flex;
   align-items: center;
@@ -689,13 +689,13 @@ main {
   justify-content: center;
   gap: 7px;
   color: #b0b9b1;
-  font-size: 9px;
+  font-size: 11px;
   margin: 34px 0 29px;
 }
 footer {
   padding: 18px 40px;
   border-top: 1px solid #e9ede8;
-  font-size: 9px;
+  font-size: 11px;
   color: #a8b2aa;
   display: flex;
   justify-content: space-between;
@@ -714,14 +714,14 @@ footer {
 }
 .muted {
   color: #96a299;
-  font-size: 11px;
+  font-size: 13px;
 }
 .count {
   background: #edf4ee;
   color: #5c876a;
   border-radius: 5px;
   padding: 3px 7px;
-  font-size: 11px;
+  font-size: 13px;
   margin-left: 7px;
 }
 .approval,
@@ -736,12 +736,12 @@ footer {
   flex: 1;
 }
 .grow p {
-  font-size: 11px;
+  font-size: 13px;
   margin-top: 4px;
 }
 .grow details {
   margin-top: 12px;
-  font-size: 11px;
+  font-size: 13px;
   color: #608271;
 }
 .grow details p {
@@ -763,7 +763,7 @@ footer {
   flex-wrap: wrap;
 }
 label {
-  font-size: 11px;
+  font-size: 13px;
   color: #6e8175;
   display: block;
 }
@@ -786,7 +786,7 @@ label > textarea {
   align-items: center;
   gap: 14px;
   padding: 23px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .project-dot {
   width: 9px;
@@ -810,7 +810,7 @@ label > textarea {
   border-radius: 5px;
 }
 .report-project strong {
-  font-size: 11px;
+  font-size: 13px;
   min-width: 65px;
   text-align: right;
 }
@@ -821,10 +821,10 @@ table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 11px;
+  font-size: 13px;
 }
 th {
-  font-size: 9px;
+  font-size: 11px;
   color: #96a498;
   font-weight: 500;
   background: #f8faf7;
@@ -857,7 +857,7 @@ td small {
 }
 .search input {
   border: 0;
-  font-size: 11px;
+  font-size: 13px;
   width: 220px;
 }
 .project-grid {
@@ -880,7 +880,7 @@ td small {
   display: flex;
 }
 .project-card p {
-  font-size: 11px;
+  font-size: 13px;
   margin-top: 8px;
 }
 .project-card-bottom {
@@ -900,11 +900,11 @@ td small {
 }
 .text-button {
   color: #548269;
-  font-size: 10px;
+  font-size: 12px;
   padding: 0;
 }
 .role-pill {
-  font-size: 10px;
+  font-size: 12px;
   background: #f3f5f1;
   border: 1px solid #e7ece3;
   padding: 5px 10px;
@@ -922,7 +922,7 @@ td small {
   box-shadow: 0 5px 25px #20392b25;
   padding: 15px 22px;
   border-radius: 9px;
-  font-size: 12px;
+  font-size: 14px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -960,7 +960,7 @@ td small {
   margin-bottom: 12px;
 }
 .modal p {
-  font-size: 12px;
+  font-size: 14px;
   margin-bottom: 18px;
 }
 .modal form > label {
@@ -992,7 +992,7 @@ td small {
   background: #f5f7ef;
   padding: 12px;
   border-radius: 6px;
-  font-size: 10px !important;
+  font-size: 12px !important;
   color: #89947b;
 }
 textarea {
@@ -1048,7 +1048,7 @@ textarea {
     grid-template-columns: repeat(2, 1fr);
   }
   .add-entry span {
-    font-size: 9px;
+    font-size: 11px;
   }
   .stat {
     padding: 18px;
@@ -1069,7 +1069,7 @@ textarea {
     font-size: 27px;
   }
   .workspace {
-    font-size: 9px;
+    font-size: 11px;
   }
   .tip {
     display: none;
@@ -1092,10 +1092,10 @@ textarea {
     padding: 14px;
   }
   .stat-label {
-    font-size: 8px;
+    font-size: 10px;
   }
   .stat-foot {
-    font-size: 8px;
+    font-size: 10px;
   }
   .stat-value {
     font-size: 27px;
@@ -1129,7 +1129,7 @@ textarea {
     display: none;
   }
   .week-title h2 {
-    font-size: 12px;
+    font-size: 14px;
   }
   .week-toolbar {
     padding: 17px;
@@ -1198,7 +1198,7 @@ textarea {
   }
   .breadcrumb {
     gap: 5px;
-    font-size: 9px;
+    font-size: 11px;
   }
   .top-actions {
     gap: 7px;
@@ -1217,10 +1217,10 @@ textarea {
     font-size: 23px;
   }
   .eyebrow {
-    font-size: 7px;
+    font-size: 9px;
   }
   .page-heading p {
-    font-size: 10px;
+    font-size: 12px;
   }
   .stats {
     grid-template-columns: 1fr;
@@ -1247,7 +1247,7 @@ textarea {
     width: 40%;
   }
   .stat-foot {
-    font-size: 9px;
+    font-size: 11px;
   }
   .week-toolbar {
     align-items: flex-start;
@@ -1255,14 +1255,14 @@ textarea {
     padding: 15px 12px;
   }
   .week-title h2 {
-    font-size: 11px;
+    font-size: 13px;
   }
   .week-title p {
-    font-size: 8px;
+    font-size: 10px;
   }
   .week-tag {
     margin-left: 3px;
-    font-size: 7px;
+    font-size: 9px;
   }
   .week-nav button {
     padding: 5px;
@@ -1283,7 +1283,7 @@ textarea {
   }
   .day-label > span {
     margin: 0;
-    font-size: 9px;
+    font-size: 11px;
   }
   .day-label small {
     margin: 0 0 0 auto;
@@ -1305,28 +1305,28 @@ textarea {
     justify-content: flex-end;
   }
   .button {
-    font-size: 10px;
+    font-size: 12px;
     padding: 9px 11px;
   }
   .week-total {
     padding: 15px;
   }
   .week-total small {
-    font-size: 8px;
+    font-size: 10px;
   }
   .bottom-note {
-    font-size: 8px;
+    font-size: 10px;
   }
   .top-actions select {
     max-width: 75px;
-    font-size: 9px;
+    font-size: 11px;
   }
   .notification svg {
     width: 16px;
   }
   footer {
     padding: 16px;
-    font-size: 8px;
+    font-size: 10px;
   }
   footer span {
     display: none;
@@ -1378,7 +1378,7 @@ textarea {
   }
   .toast {
     width: 85%;
-    font-size: 11px;
+    font-size: 13px;
   }
   .approval {
     padding: 17px;
@@ -1419,7 +1419,7 @@ label textarea {
   gap: 15px;
   justify-content: space-between;
   align-items: center;
-  font-size: 12px;
+  font-size: 14px;
   margin-bottom: 20px;
   overflow-wrap: anywhere;
 }
@@ -1428,7 +1428,7 @@ label textarea {
   border: 1px solid #dce8d6;
   color: #647858;
   padding: 15px 17px;
-  font-size: 12px;
+  font-size: 14px;
   border-radius: 7px;
   margin-bottom: 20px;
   line-height: 1.7;
@@ -1469,7 +1469,7 @@ label textarea {
   gap: 10px;
   padding: 18px;
   color: #8a988f;
-  font-size: 11px;
+  font-size: 13px;
 }
 .pagination > span {
   margin-right: auto;
@@ -1486,7 +1486,7 @@ label textarea {
   border-radius: 6px;
   background: #fff;
   color: #7c8f80;
-  font-size: 11px;
+  font-size: 13px;
 }
 .tabs button.selected {
   background: #e3efe6;
@@ -1495,11 +1495,11 @@ label textarea {
 }
 .history {
   margin-top: 25px;
-  font-size: 11px;
+  font-size: 13px;
   color: #7d9182;
 }
 .history p {
-  font-size: 10px;
+  font-size: 12px;
   padding: 6px 0;
 }
 .history summary,
@@ -1510,7 +1510,7 @@ details summary {
   background: #cfa15b;
 }
 .range-label {
-  font-size: 11px;
+  font-size: 13px;
   margin: 12px 0 20px;
   color: #7e9384;
 }
@@ -1523,7 +1523,7 @@ details summary {
   background: #fff0dc;
   color: #9c7a41;
   border-radius: 4px;
-  font-size: 9px;
+  font-size: 11px;
   padding: 2px 5px;
   margin-left: 5px;
 }
@@ -1537,7 +1537,7 @@ details summary {
   border: 1px solid #dfe7df;
   border-radius: 6px;
   background: #fff;
-  font-size: 11px;
+  font-size: 13px;
 }
 .project-symbol {
   color: #679283;
@@ -1567,7 +1567,7 @@ details summary {
   margin-top: 23px;
 }
 .account-card p {
-  font-size: 12px;
+  font-size: 14px;
 }
 .modal > label {
   margin: 16px 0;
@@ -1585,7 +1585,7 @@ details summary {
   align-items: center;
 }
 .avatar-stack > .muted {
-  font-size: 9px;
+  font-size: 11px;
   margin-left: 8px;
 }
 .auth-layout {
@@ -1614,15 +1614,15 @@ details summary {
   margin: 18px 0 24px;
 }
 .auth-story p {
-  font-size: 15px;
+  font-size: 16px;
   color: #7b9381;
 }
 .auth-story small {
-  font-size: 11px;
+  font-size: 13px;
   color: #819780;
 }
 .auth-story .eyebrow {
-  font-size: 9px;
+  font-size: 11px;
   color: #6d8b76;
 }
 .auth-week {
@@ -1637,7 +1637,7 @@ details summary {
   border-radius: 12px;
 }
 .auth-week span {
-  font-size: 8px;
+  font-size: 10px;
   color: #829780;
   letter-spacing: 1px;
 }
@@ -1664,7 +1664,7 @@ details summary {
   margin-top: 18px;
 }
 .auth-card > p {
-  font-size: 12px;
+  font-size: 14px;
   margin: 12px 0 25px;
 }
 .auth-card form {
@@ -1672,30 +1672,30 @@ details summary {
 }
 .auth-card label {
   margin-bottom: 18px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .auth-card input {
   padding: 12px;
 }
 .auth-card .button {
   padding: 12px;
-  font-size: 12px;
+  font-size: 14px;
 }
 .auth-help {
   margin-top: 20px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .auth-card .setup-hint {
-  font-size: 10px;
+  font-size: 12px;
   margin-top: 35px;
   color: #a0ada1;
   line-height: 1.8;
 }
 .auth-card code {
-  font-size: 10px;
+  font-size: 12px;
 }
 .auth-panel > small {
-  font-size: 10px;
+  font-size: 12px;
   color: #a5b0a7;
   margin-top: 45px;
 }
@@ -1765,7 +1765,7 @@ details summary {
     justify-content: center;
   }
   .range-label {
-    font-size: 10px;
+    font-size: 12px;
   }
   .collection-tools {
     gap: 10px;
@@ -1778,7 +1778,7 @@ details summary {
   }
   .pagination {
     padding: 14px 6px;
-    font-size: 9px;
+    font-size: 11px;
     gap: 6px;
   }
   .tabs button {
@@ -1788,7 +1788,7 @@ details summary {
     padding: 20px;
   }
   .history p {
-    font-size: 9px;
+    font-size: 11px;
   }
   .auth-card h1 {
     font-size: 30px;
@@ -1803,7 +1803,7 @@ details summary {
     flex-wrap: wrap;
   }
   .top-actions .role-pill {
-    font-size: 9px;
+    font-size: 11px;
     min-width: 0;
   }
 }
@@ -1818,12 +1818,12 @@ details summary {
 }
 .unapproved-card > p {
   padding: 0 23px 20px;
-  font-size: 12px;
+  font-size: 14px;
 }
 /* Derived Missing / Overdue indicators */
 .indicator {
   border-radius: 6px;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   padding: 4px 9px;
   white-space: nowrap;
