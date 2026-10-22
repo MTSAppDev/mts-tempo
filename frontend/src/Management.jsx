@@ -48,14 +48,17 @@ export default function Management({
     setModal({ item });
   }
   function showCredentials(result) {
-    const info = result.invitation || result;
-    const localLink = `${location.origin}${result.invitation ? "/invite" : "/reset-password"}#token=${info.token}`;
+    const info = result.invitation || result.passwordReset || result;
+    const localLink = result.passwordReset
+      ? `${location.origin}/`
+      : `${location.origin}${result.invitation ? "/invite" : "/reset-password"}#token=${info.token}`;
     setCopyStatus("");
     setCredentials({
       ...info,
       link: localLink,
       email: result.user?.email,
       type: result.invitation ? "Invitation" : "Password reset",
+      immediateReset: !!result.passwordReset,
     });
   }
   async function submit(e) {
@@ -134,7 +137,7 @@ export default function Management({
   async function copy() {
     try {
       await navigator.clipboard.writeText(
-        `${credentials.type}\n${credentials.email || ""}\n${credentials.link}${credentials.temporaryPassword ? `\nTemporary password: ${credentials.temporaryPassword}` : ""}\nExpires: ${stamp(credentials.expiresAt)}\nPassword change is optional and recommended.`,
+        `${credentials.type}\n${credentials.email || ""}\n${credentials.link}${credentials.temporaryPassword ? `\nTemporary password: ${credentials.temporaryPassword}` : ""}${credentials.expiresAt ? `\nExpires: ${stamp(credentials.expiresAt)}` : ""}\nPassword change is optional and recommended.`,
       );
       setCopyStatus("Copied");
     } catch {
@@ -326,6 +329,12 @@ export default function Management({
                       ))}
                     </select>
                   </label>
+                  {!modal.item && (
+                    <p className="form-note">
+                      Choose Manager above to let this person manage projects,
+                      assign users, and approve timesheets.
+                    </p>
+                  )}
                   <div className="date-pair">
                     <label>
                       Time tracking starts
@@ -461,16 +470,17 @@ export default function Management({
             <div className="account-actions">
               <button
                 className="button outline"
-                disabled={busy}
+                disabled={busy || (modal.item.active && modal.item.id === user.id)}
+                title={modal.item.id === user.id ? "Change your own password from Account" : undefined}
                 onClick={() =>
                   accountAction(
                     modal.item,
-                    modal.item.active ? "password-reset" : "invitation",
+                    modal.item.active ? "reset-password" : "invitation",
                   )
                 }
               >
                 {modal.item.active
-                  ? "Create password-reset link"
+                  ? "Reset password"
                   : "Reissue invitation"}
               </button>
             </div>
@@ -494,8 +504,9 @@ export default function Management({
           close={() => setCredentials(null)}
         >
           <p>
-            No email was sent. Copy these details before closing; the temporary
-            password cannot be retrieved later.
+            {credentials.immediateReset
+              ? "Password reset immediately. Existing sessions have ended. Share this login link and new temporary password with the user."
+              : "No email was sent. Copy these details before closing; the temporary password cannot be retrieved later."}
           </p>
           <label>
             Link
@@ -515,7 +526,9 @@ export default function Management({
               />
             </label>
           )}
-          <p className="range-label">Expires {stamp(credentials.expiresAt)}</p>
+          {credentials.expiresAt && (
+            <p className="range-label">Expires {stamp(credentials.expiresAt)}</p>
+          )}
           <button className="button primary full-width" onClick={copy}>
             {copyStatus === "Copied" ? <Check size={16} /> : <Copy size={16} />}
             Copy details

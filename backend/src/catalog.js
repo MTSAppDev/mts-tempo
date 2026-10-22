@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { User, Project, Client, Task } from './models.js';
+import { User, Session, Project, Client, Task } from './models.js';
 import { z, id, name, email, role, version, pageQuery, literalSearch, parse, dateString } from './validation.js';
 import { istToday } from './time.js';
 import { asyncRoute as wrap, roles, fail, token, digest, hashPassword, publicUser } from './security.js';
@@ -33,6 +33,19 @@ export function catalogRouter() {
     user.history.push(history(req, 'user-updated', JSON.stringify({ name: body.name, role: body.role, disabled: body.disabled, trackingStart: body.trackingStart, trackingEnd: body.trackingEnd }))); await user.save(); res.json({ user: publicUser(user) });
   }));
   r.post('/users/:id/invitation', roles('Admin'), wrap(async (req, res) => { parse(z.object({}).strict(), req.body); const user = await find(User, req.params.id); if (user.active || user.disabled) fail(409, 'Only pending, enabled users can be invited'); res.json(await invitation(user, req.user._id)); }));
+  r.post('/users/:id/reset-password', roles('Admin'), wrap(async (req, res) => {
+    parse(z.object({}).strict(), req.body);
+    const user = await find(User, req.params.id);
+    if (!user.active || user.disabled) fail(409, 'Only active, enabled users can have their password reset');
+    if (String(user._id) === String(req.user._id)) fail(400, 'Change your own password from Account');
+    const temporaryPassword = token().slice(0, 24);
+    user.passwordHash = await hashPassword(temporaryPassword);
+    user.resetTokenHash = undefined; user.resetExpiresAt = undefined; user.authVersion++;
+    user.history.push(history(req, 'admin-password-reset'));
+    await user.save();
+    await Session.deleteMany({ user: user._id });
+    res.json({ user: publicUser(user), passwordReset: { temporaryPassword, emailSent: false } });
+  }));
   r.post('/users/:id/password-reset', roles('Admin'), wrap(async (req, res) => { parse(z.object({}).strict(), req.body); const user = await find(User, req.params.id); if (!user.active || user.disabled) fail(409, 'Account is unavailable'); const raw = token(); user.resetTokenHash = digest(raw); user.resetExpiresAt = new Date(Date.now() + 3600000); user.history.push(history(req, 'password-reset-issued')); await user.save(); res.json({ token: raw, link: `${process.env.APP_URL || 'http://localhost:5173'}/reset-password#token=${raw}`, expiresAt: user.resetExpiresAt, emailSent: false }); }));
   r.get('/users/:id/history', roles('Admin'), wrap(async (req, res) => res.json({ items: (await find(User, req.params.id)).history })));
   r.get('/users/:id', management, wrap(async (req, res) => res.json({ user: publicUser(await find(User, req.params.id)) })));

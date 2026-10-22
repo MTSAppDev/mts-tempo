@@ -37,6 +37,7 @@ Admin creates a user with `POST /users`. The response includes `{user,invitation
 
 - `POST /users/:id/invitation` — Admin reissues a pending invitation, invalidating the old token and temporary password.
 - `POST /users/:id/password-reset` — Admin obtains a one-hour reset token/link for an active user. No email is sent. Existing password remains usable until reset completes.
+- `POST /users/:id/reset-password` — Admin immediately resets an active, enabled user's password and receives `{user,passwordReset:{temporaryPassword,emailSent:false}}`. Revokes existing sessions and reset tokens; records an audit event. Share the temporary password manually; it is returned only by this request. This is the Team screen's Reset password action. Password change remains optional.
 - `POST /auth/reset-password` — `{token,newPassword}`. Consumes the token and revokes all sessions. Admin-assisted recovery replaces a public forgotten-password email flow while email is excluded.
 
 ## Users and catalogs

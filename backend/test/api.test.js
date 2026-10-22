@@ -223,6 +223,27 @@ test('backend integration workflows', async t => {
     const newManager = await login('worker@test.local'); await request(newManager, 'GET', '/users');
     const history = await request(admin, 'GET', `/users/${worker.user.id}/history`); assert.ok(history.items.some(h => h.action === 'user-updated'));
   });
+  await t.test('Admin immediately resets passwords and revokes sessions and reset links', async () => {
+    await request(admin, 'POST', `/users/${admin.user.id}/reset-password`, {}, 400);
+    const recovery = await request(admin, 'POST', '/users', { name: 'Recovery Manager', email: 'recovery@test.local', role: 'Manager' }, 201);
+    assert.equal(recovery.user.role, 'Manager');
+    const account = actor();
+    await request(account, 'POST', '/auth/accept-invitation', { token: recovery.invitation.token, temporaryPassword: recovery.invitation.temporaryPassword });
+    const link = await request(admin, 'POST', `/users/${recovery.user.id}/password-reset`, {});
+    await request(manager, 'POST', `/users/${recovery.user.id}/reset-password`, {}, 403);
+    const reset = await request(admin, 'POST', `/users/${recovery.user.id}/reset-password`, {});
+    assert.ok(reset.passwordReset.temporaryPassword.length >= 12);
+    await request(account, 'GET', '/auth/me', undefined, 401);
+    await request(null, 'POST', '/auth/login', { email: recovery.user.email, password: recovery.invitation.temporaryPassword }, 401);
+    await request(null, 'POST', '/auth/reset-password', { token: link.token, newPassword: secret }, 400);
+    const loggedIn = await request(actor(), 'POST', '/auth/login', { email: recovery.user.email, password: reset.passwordReset.temporaryPassword });
+    assert.equal(loggedIn.user.role, 'Manager');
+    const stored = await User.findById(recovery.user.id);
+    assert.ok(stored.history.some(event => event.action === 'admin-password-reset'));
+    assert.ok(!JSON.stringify(stored.history).includes(reset.passwordReset.temporaryPassword));
+    await request(admin, 'PATCH', `/users/${stored._id}`, { version: stored.__v, disabled: true });
+    await request(admin, 'POST', `/users/${stored._id}/reset-password`, {}, 409);
+  });
   await t.test('password changes, reset tokens, session expiry and deactivation', async () => {
     const second = await login('other@test.local');
     await request(other, 'POST', '/auth/change-password', { currentPassword: secret, newPassword: 'Changed-password-43!' });

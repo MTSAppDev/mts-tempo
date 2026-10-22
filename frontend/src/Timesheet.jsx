@@ -7,6 +7,7 @@ import {
   FolderKanban,
   CheckCheck,
   Plus,
+  Copy,
   X,
   ArrowRight,
   BarChart3,
@@ -125,6 +126,23 @@ export default function Timesheet({
   function patch(key, changes) {
     edit(rows.map((r) => (r.key === key ? { ...r, ...changes } : r)));
   }
+  function copyPreviousDay(day) {
+    if (!editable || busy || day === 0) return;
+    const previous = rows.filter((r) => r.date === addDays(week, day - 1));
+    if (!previous.length || rows.length + previous.length > 1000) return;
+    edit([
+      ...rows,
+      ...previous.map((r) => ({
+        key: crypto.randomUUID(),
+        date: addDays(week, day),
+        project: r.project,
+        task: r.task,
+        description: r.description,
+        hours: r.hours,
+      })),
+    ]);
+    notify(`Copied ${previous.length} ${previous.length === 1 ? "entry" : "entries"} from ${days[day - 1]}. Save draft to keep your changes.`);
+  }
   async function save(submit = false) {
     setError("");
     setBusy(true);
@@ -155,7 +173,7 @@ export default function Timesheet({
         setSheet(saved);
       }
       notify(
-        submit ? "Timesheet submitted for review." : "Draft saved to MongoDB.",
+        submit ? "Timesheet submitted for review." : "Draft Saved",
       );
     } catch (e) {
       setError(e);
@@ -296,6 +314,9 @@ export default function Timesheet({
             </div>
             {days.map((day, i) => {
               const dayRows = rows.filter((r) => r.date === addDays(week, i));
+              const previousCount = i > 0
+                ? rows.filter((r) => r.date === addDays(week, i - 1)).length
+                : 0;
               return (
                 <div
                   className={`day-group ${i > 4 ? "weekend" : ""}`}
@@ -375,15 +396,18 @@ export default function Timesheet({
                         />
                         <input
                           className="hours"
-                          type="number"
-                          min="0.01"
-                          step="0.01"
+                          type="text"
+                          inputMode="decimal"
+                          pattern="[0-9]*[.]?[0-9]{0,2}"
                           aria-label={`${day} hours ${index + 1}`}
                           disabled={!editable || busy}
                           value={r.hours}
-                          onChange={(e) =>
-                            patch(r.key, { hours: e.target.value })
-                          }
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (/^\d*(?:\.\d{0,2})?$/.test(value)) {
+                              patch(r.key, { hours: value });
+                            }
+                          }}
                         />
                         {editable ? (
                           <button
@@ -402,6 +426,7 @@ export default function Timesheet({
                       </div>
                     ))}
                     {editable ? (
+                      <div className="day-entry-actions">
                       <button
                         className={`add-entry ${!dayRows.length ? "empty-entry" : ""}`}
                         disabled={busy || !projects.length || !tasks.length}
@@ -417,6 +442,19 @@ export default function Timesheet({
                               : "Start something good.")}
                         </span>
                       </button>
+                      {i > 0 && (
+                        <button
+                          className="copy-day"
+                          aria-label={`Copy ${days[i - 1]} entries to ${day}`}
+                          title={`Append all ${days[i - 1]} entries to ${day}`}
+                          disabled={busy || !previousCount || rows.length + previousCount > 1000}
+                          onClick={() => copyPreviousDay(i)}
+                        >
+                          <Copy size={15} />
+                          Copy previous day
+                        </button>
+                      )}
+                      </div>
                     ) : (
                       !dayRows.length && (
                         <div className="empty-entry muted">No time logged</div>
@@ -435,6 +473,9 @@ export default function Timesheet({
               </strong>
             </div>
           </section>
+          <div className="timesheet-action-error">
+            <ErrorBox error={error} />
+          </div>
           <div className="sheet-footer">
             <span>
               <span className={`saved-dot ${dirty ? "unsaved" : ""}`} />

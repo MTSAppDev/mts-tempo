@@ -76,9 +76,22 @@ test("real API: invite, assign, track, submit, review, reopen and report", async
   await worker
     .getByLabel("Monday description 1")
     .fill("Implement responsive navigation");
+  const hoursInput = worker.getByLabel("Monday hours 1");
+  await hoursInput.focus();
+  await worker.keyboard.insertText("development");
+  await expect(hoursInput).toHaveValue("");
+  await worker.keyboard.insertText("e");
+  await expect(hoursInput).toHaveValue("");
+  await worker.keyboard.insertText("1.25");
+  await expect(hoursInput).toHaveValue("1.25");
+  await worker.keyboard.insertText("development");
+  await expect(hoursInput).toHaveValue("1.25");
+  await hoursInput.fill("1e3");
+  await expect(hoursInput).toHaveValue("1.25");
   await worker.getByLabel("Monday hours 1").fill("39");
   await worker.getByRole("button", { name: "Submit timesheet" }).click();
-  await expect(worker.getByRole("alert")).toContainText("At least 40 hours");
+  await expect(worker.getByRole("alert").first()).toContainText("At least 40 hours");
+  await expect(worker.locator(".timesheet-action-error").getByRole("alert")).toContainText("At least 40 hours");
   await worker.getByRole("button", { name: "Save draft", exact: true }).click();
   await expect(worker.getByText("Saved to your workspace")).toBeVisible();
   await worker.reload();
@@ -88,6 +101,23 @@ test("real API: invite, assign, track, submit, review, reopen and report", async
     .click();
   await worker.getByLabel("Monday description 2").fill("Review accessibility");
   await worker.getByLabel("Monday hours 2").fill("1.5");
+  await worker.getByRole("button", { name: "Add time Tuesday", exact: true }).click();
+  await worker.getByLabel("Tuesday description 1").fill("Existing Tuesday work");
+  await worker.getByLabel("Tuesday hours 1").fill("0.5");
+  await worker.getByRole("button", { name: "Copy Monday entries to Tuesday", exact: true }).click();
+  await expect(worker.getByLabel("Tuesday description 1")).toHaveValue("Existing Tuesday work");
+  await expect(worker.getByLabel("Tuesday description 2")).toHaveValue("Implement responsive navigation");
+  await expect(worker.getByLabel("Tuesday hours 2")).toHaveValue("39");
+  await expect(worker.getByLabel("Tuesday description 3")).toHaveValue("Review accessibility");
+  await expect(worker.getByLabel("Tuesday hours 3")).toHaveValue("1.5");
+  await worker.getByLabel("Tuesday hours 2").fill("38");
+  await expect(worker.getByLabel("Monday hours 1")).toHaveValue("39");
+  await worker.getByRole("button", { name: "Save draft", exact: true }).click();
+  await worker.reload();
+  await expect(worker.getByLabel("Tuesday hours 2")).toHaveValue("38");
+  for (let i = 0; i < 3; i++) {
+    await worker.getByRole("button", { name: "Remove Tuesday entry 1", exact: true }).click();
+  }
   await worker.getByRole("button", { name: "Submit timesheet" }).click();
   await expect(worker.getByLabel("Monday hours 1")).toBeDisabled();
   await worker.screenshot({
@@ -217,18 +247,15 @@ test("Admin-assisted password recovery works without email", async ({ page, brow
   await nav(page, "Team");
   const managerRow = page.locator(".list-row").filter({ hasText: "Test Manager" });
   await managerRow.getByRole("button", { name: "Manage", exact: true }).click();
-  await page.getByRole("button", { name: "Create password-reset link" }).click();
+  await page.getByRole("button", { name: "Reset password", exact: true }).click();
   const ready = page.getByRole("dialog", { name: "Password reset ready" });
   await expect(ready).toBeVisible();
   const link = await ready.getByLabel("Link", { exact: true }).inputValue();
+  const temporaryPassword = await ready.getByLabel("Temporary password", { exact: true }).inputValue();
   const context = await browser.newContext();
   const recovery = await context.newPage();
   await recovery.goto(link);
-  await recovery.getByLabel("New password", { exact: true }).fill("Recovered-browser-password-44!");
-  await recovery.getByLabel("Confirm password", { exact: true }).fill("Recovered-browser-password-44!");
-  await recovery.getByRole("button", { name: "Reset password", exact: true }).click();
-  await expect(recovery.getByRole("heading", { name: "Welcome back." })).toBeVisible();
-  await login(recovery, "manager@tempo.test", "Recovered-browser-password-44!");
+  await login(recovery, "manager@tempo.test", temporaryPassword);
   await nav(recovery, "Team");
   await expect(recovery.getByRole("button", { name: "Invite user" })).toHaveCount(0);
   await nav(recovery, "Clients");

@@ -44,7 +44,7 @@ To call a separately hosted backend, set `VITE_API_URL=https://mts-tempo.onrende
 
 All workspace records live in MongoDB. The old demo `tempo-v1` localStorage key is no longer read or written; no demo records are imported. Unsaved edits stay in memory, and navigation/reload warns before leaving them. Weekly dates and reporting presets use the current IST calendar. Invitation/reset credentials appear only in their Admin dialog and are not stored in browser storage. No email is sent.
 
-Suggested first-use order: create a client, create shared tasks, invite users, create projects and assign users. Copy the invitation link and temporary password before closing the invitation dialog. Users accept the invitation at that link and can optionally change their password in Account. Admins can reissue pending invitations or create password-reset links from Team → Manage.
+Suggested first-use order: create a client, create shared tasks, invite users, create projects and assign users. Choose Manager in the Role dropdown when inviting a manager. Copy the invitation link and temporary password before closing the invitation dialog. Users accept the invitation at that link and can optionally change their password in Account. Admins can reissue pending invitations or immediately reset an active user's password from Team → Manage → Reset password. Copy the new temporary password before closing the dialog and share it manually. Existing sessions and reset links are invalidated. Use Account to change your own password.
 
 ## Backend
 
