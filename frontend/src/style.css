@@ -493,6 +493,9 @@ main {
   padding: 1px 6px;
   margin-left: 10px;
 }
+.week-copy-actions {
+  padding: 0 20px 14px;
+}
 .week-nav {
   display: flex;
   border: 1px solid #e2e8e2;

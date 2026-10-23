@@ -182,6 +182,35 @@ export default function Timesheet({
       setWorking(false);
     }
   }
+  async function copyPreviousWeek() {
+    if (!editable || busy || loading || !loaded) return;
+    setError("");
+    setBusy(true);
+    setWorking(true);
+    try {
+      const result = await api(`/timesheets?userId=${user.id}&weekStart=${addDays(week, -7)}`);
+      const previous = result.items[0]?.entries || [];
+      if (!previous.length) throw new Error("No saved entries found for the previous week.");
+      if (rows.length + previous.length > 1000) throw new Error("Copying would exceed the limit of 1,000 entries per timesheet.");
+      edit([
+        ...rows,
+        ...previous.map((r) => ({
+          key: crypto.randomUUID(),
+          date: addDays(r.date, 7),
+          project: r.project,
+          task: r.task,
+          description: r.description,
+          hours: r.hours,
+        })),
+      ]);
+      notify(`Copied ${previous.length} ${previous.length === 1 ? "entry" : "entries"} from the previous week. Review and save your draft.`);
+    } catch (e) {
+      setError(e);
+    } finally {
+      setBusy(false);
+      setWorking(false);
+    }
+  }
   return (
     <>
       <Heading
@@ -305,6 +334,18 @@ export default function Timesheet({
                 </button>
               </div>
             </div>
+            {editable && (
+              <div className="week-copy-actions">
+                <button
+                  className="button outline"
+                  disabled={busy}
+                  onClick={copyPreviousWeek}
+                >
+                  <Copy size={16} />
+                  Copy previous week
+                </button>
+              </div>
+            )}
             <div className="table-head">
               <span>DAY / DATE</span>
               <span>PROJECT & TASK</span>
