@@ -146,6 +146,30 @@ test('backend integration workflows', async t => {
     own = await request(manager, 'POST', `/timesheets/${own._id}/submit`, { version: own.__v });
     own = await request(manager, 'POST', `/timesheets/${own._id}/approve`, { version: own.__v }); assert.equal(own.status, 'Approved');
   });
+  await t.test('approval filters combine user, status, inclusive week overlap and pagination', async () => {
+    const statuses = ['Draft', 'Submitted', 'Rejected', 'Approved'];
+    for (let index = 0; index < statuses.length; index++) {
+      const date = `2025-03-${String(3 + index * 7).padStart(2, '0')}`;
+      let record = await request(worker, 'POST', '/timesheets', { weekStart: date, entries: [{ ...entries(40)[0], date }] }, 201);
+      if (statuses[index] !== 'Draft') record = await request(worker, 'POST', `/timesheets/${record._id}/submit`, { version: record.__v });
+      if (statuses[index] === 'Rejected') await request(manager, 'POST', `/timesheets/${record._id}/reject`, { version: record.__v, reason: 'Filter test' });
+      if (statuses[index] === 'Approved') await request(manager, 'POST', `/timesheets/${record._id}/approve`, { version: record.__v });
+      const selected = await request(manager, 'GET', `/timesheets?userId=${worker.user.id}&status=${statuses[index]}&start=${date}&end=${date}`);
+      assert.equal(selected.total, 1);
+      assert.equal(selected.items[0].user, worker.user.id);
+      assert.equal(selected.items[0].status, statuses[index]);
+    }
+    const match = await request(admin, 'GET', `/timesheets?userId=${worker.user.id}&status=Draft&start=2025-03-09&end=2025-03-09`);
+    assert.equal(match.total, 1); // Sunday overlaps the Draft week's end.
+    assert.equal((await request(admin, 'GET', `/timesheets?userId=${worker.user.id}&status=Draft&start=2025-03-10`)).items.some(s => s.weekStart === '2025-03-03'), false);
+    assert.equal((await request(admin, 'GET', `/timesheets?userId=${manager.user.id}&start=2025-03-01&end=2025-03-31`)).total, 0);
+    const paged = await request(manager, 'GET', `/timesheets?userId=${worker.user.id}&start=2025-03-01&end=2025-03-31&limit=1&page=2`);
+    assert.equal(paged.total, 4); assert.equal(paged.items.length, 1); assert.equal(paged.items[0].weekStart, '2025-03-17');
+    assert.equal((await request(worker, 'GET', '/timesheets?start=2025-03-01&end=2025-03-31')).total, 4);
+    await request(worker, 'GET', `/timesheets?userId=${manager.user.id}&start=2025-03-01`, undefined, 403);
+    await request(manager, 'GET', '/timesheets?start=2025-03-10&end=2025-03-01', undefined, 400);
+    await request(manager, 'GET', '/timesheets?start=2025-02-30', undefined, 400);
+  });
   await t.test('reports apply date boundaries, owner scope and CSV escaping', async () => {
     const jan = await request(worker, 'GET', '/reports?period=custom&start=2026-01-01&end=2026-01-31'); assert.equal(jan.totals.hours, 40); assert.equal(jan.unapproved.totals.hours, 0);
     const feb = await request(worker, 'GET', '/reports?period=custom&start=2026-02-01&end=2026-02-28'); assert.equal(feb.totals.hours, 2);

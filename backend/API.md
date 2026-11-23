@@ -70,7 +70,7 @@ Only the owner may create/edit/submit their time, regardless of role. Admin/Mana
 
 | Endpoint | Body / behavior |
 |---|---|
-| `GET /timesheets` | Pagination; optional `userId`, `status`, `weekStart`; managers/admins see all unless filtered |
+| `GET /timesheets` | Pagination; optional `userId`, `status`, `weekStart`, `start`, `end`; dates are inclusive `YYYY-MM-DD` and select whole weeks overlapping the range. Reversed/invalid dates return 400. Managers/admins see all unless filtered; Users stay scoped to their own sheets. |
 | `GET /timesheets/current` | Current IST Monday and own existing sheet or null |
 | `POST /timesheets` | `{weekStart:"YYYY-MM-DD",entries:[]}`; creates own Draft; duplicate user/week returns 409 |
 | `GET /timesheets/:id` | Working entries, totals, deadline, late flag, `revision`, `approvals`, `lastApproved`, history, and `__v` |

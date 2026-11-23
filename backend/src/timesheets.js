@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { Timesheet, Project, Task } from './models.js';
-import { z, id, version, entry, weekString, parse, pageQuery } from './validation.js';
+import { z, id, version, entry, weekString, dateString, parse, pageQuery } from './validation.js';
 import { asyncRoute as wrap, roles, fail } from './security.js';
 import { requireVersion } from './catalog.js';
 import { addDays, deadline, totalHours, currentWeek, TIMEZONE } from './time.js';
@@ -24,10 +24,12 @@ async function validateEntries(entries, week, user) {
 export function timesheetRouter() {
   const r = Router();
   r.get('/', wrap(async (req, res) => {
-    const q = parse(pageQuery.extend({ userId: id.optional(), status: statuses.optional(), weekStart: weekString.optional() }), req.query);
+    const q = parse(pageQuery.extend({ userId: id.optional(), status: statuses.optional(), weekStart: weekString.optional(), start: dateString.optional(), end: dateString.optional() }), req.query);
+    if (q.start && q.end && q.start > q.end) fail(400, 'Start date must be on or before end date');
     if (req.user.role === 'User' && q.userId && q.userId !== String(req.user._id)) fail(403, 'Only your own timesheets are available');
     const filter = {}; if (req.user.role === 'User') filter.user = req.user._id; else if (q.userId) filter.user = q.userId;
     if (q.status) filter.status = q.status; if (q.weekStart) filter.weekStart = q.weekStart;
+    if (q.start || q.end) filter.$and = [{ weekStart: { ...(q.start ? { $gte: addDays(q.start, -6) } : {}), ...(q.end ? { $lte: q.end } : {}) } }];
     const [items, total] = await Promise.all([Timesheet.find(filter).sort({ weekStart: -1, _id: -1 }).skip((q.page - 1) * q.limit).limit(q.limit), Timesheet.countDocuments(filter)]);
     res.json({ items: items.map(sheetView), total, page: q.page, limit: q.limit });
   }));

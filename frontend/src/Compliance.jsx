@@ -3,7 +3,7 @@ import { api } from "./api";
 import { nice, addDays, initials } from "./lib";
 import { ErrorBox, Loading, Empty, Pagination } from "./ui";
 // Derived Missing / Overdue indicators for weeks whose Sunday IST deadline has passed (last 12 weeks).
-export default function Compliance({ user }) {
+export default function Compliance({ user, filters }) {
   const [indicator, setIndicator] = useState(""),
     [page, setPage] = useState(1),
     [result, setResult] = useState(null),
@@ -19,6 +19,10 @@ export default function Compliance({ user }) {
       limit: "20",
       ...(indicator ? { indicator } : {}),
     });
+    if (filters?.userId) params.set("userId", filters.userId);
+    const monday = (date) => addDays(date, -((new Date(`${date}T00:00:00Z`).getUTCDay() + 6) % 7));
+    if (filters?.start) params.set("from", monday(filters.start));
+    if (filters?.end) params.set("to", monday(filters.end));
     api(`/compliance?${params}`, { signal: c.signal })
       .then(setResult)
       .catch((e) => {
@@ -28,7 +32,7 @@ export default function Compliance({ user }) {
         if (!c.signal.aborted) setLoading(false);
       });
     return () => c.abort();
-  }, [indicator, page, reload]);
+  }, [indicator, page, reload, filters]);
   const choose = (value) => {
     setIndicator(value);
     setPage(1);
@@ -106,6 +110,9 @@ export default function Compliance({ user }) {
             )}
             <Pagination page={page} total={result.total} onChange={setPage} />
             <p className="form-note compliance-note">
+              {filters?.start || filters?.end
+                ? "Selected date range, up to 53 weeks. "
+                : "Last 12 weeks. "}
               Only users with a time-tracking start date are expected, and only
               for weeks that lie fully between their start and end dates. Set
               these dates in Team → Manage.

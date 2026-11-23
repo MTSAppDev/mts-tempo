@@ -301,6 +301,45 @@ test("copy previous week appends matching weekdays and saves independent entries
   await page.getByRole("button", { name: "Previous week", exact: true }).click();
   await expect(page.getByLabel("Monday hours 1")).toHaveValue("7.5");
 });
+test("approval user and date filters persist across every status tab", async ({ page }) => {
+  test.setTimeout(30000);
+  const requests = [];
+  await page.route("**/api/timesheets?**", async route => {
+    const params = new URL(route.request().url()).searchParams;
+    requests.push({ endpoint: "timesheets", params });
+    await route.fulfill({ json: { items: [], total: 0, page: Number(params.get("page") || 1), limit: 20 } });
+  });
+  await page.route("**/api/compliance?**", async route => {
+    const params = new URL(route.request().url()).searchParams;
+    requests.push({ endpoint: "compliance", params });
+    await route.fulfill({ json: { items: [], total: 0, counts: { missing: 0, overdue: 0 }, from: params.get("from") || "2026-03-02", to: params.get("to") || "2026-03-09" } });
+  });
+  await login(page, "admin@tempo.test");
+  await nav(page, "Approvals");
+  await page.getByLabel("Team member", { exact: true }).selectOption({ label: "Test Manager (manager@tempo.test)" });
+  const selected = await page.getByLabel("Team member", { exact: true }).inputValue();
+  await page.getByLabel("Start date", { exact: true }).fill("2026-03-04");
+  await page.getByLabel("End date", { exact: true }).fill("2026-03-10");
+  for (const status of ["Submitted", "Approved", "Rejected", "Draft"]) {
+    await page.getByRole("button", { name: status, exact: true }).click();
+    await expect.poll(() => {
+      const latest = requests.filter(r => r.endpoint === "timesheets").at(-1)?.params;
+      return [latest?.get("status"), latest?.get("userId"), latest?.get("start"), latest?.get("end")];
+    }).toEqual([status, selected, "2026-03-04", "2026-03-10"]);
+  }
+  await page.getByRole("button", { name: "Missing & overdue", exact: true }).click();
+  await expect.poll(() => {
+    const latest = requests.filter(r => r.endpoint === "compliance").at(-1)?.params;
+    return [latest?.get("userId"), latest?.get("from"), latest?.get("to")];
+  }).toEqual([selected, "2026-03-02", "2026-03-09"]);
+  await page.getByRole("button", { name: "Clear filters", exact: true }).click();
+  await expect(page.getByLabel("Team member", { exact: true })).toHaveValue("");
+  await expect(page.getByLabel("Start date", { exact: true })).toHaveValue("");
+  await page.getByRole("button", { name: "Approved", exact: true }).click();
+  await page.getByLabel("Start date", { exact: true }).fill("2026-03-20");
+  await page.getByLabel("End date", { exact: true }).fill("2026-03-10");
+  await expect(page.getByRole("alert")).toContainText("Start date must be on or before end date");
+});
 test("timesheet loading failures show a retry instead of a blank editable sheet", async ({ page }) => {
   await page.route("**/api/timesheets?**", route => route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ error: "Temporary database outage" }) }));
   await login(page, "admin@tempo.test");

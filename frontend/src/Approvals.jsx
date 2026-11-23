@@ -22,12 +22,21 @@ export default function Approvals({ user, data, notify }) {
     [modal, setModal] = useState(null),
     [busy, setBusy] = useState(false),
     [actionError, setActionError] = useState("");
+  const [filters, setFilters] = useState({ userId: "", start: "", end: "" });
+  const rangeError = filters.start && filters.end && filters.start > filters.end
+    ? "Start date must be on or before end date." : "";
+  function changeFilter(name, value) {
+    setFilters((previous) => ({ ...previous, [name]: value }));
+    setPage(1);
+  }
   useEffect(() => {
-    if (status === "Missing") return;
+    if (status === "Missing" || rangeError) return;
     const c = new AbortController();
     setLoading(true);
     setError("");
-    api(`/timesheets?status=${status}&page=${page}&limit=20`, {
+    const params = new URLSearchParams({ status, page: String(page), limit: "20" });
+    Object.entries(filters).forEach(([key, value]) => { if (value) params.set(key, value); });
+    api(`/timesheets?${params}`, {
       signal: c.signal,
     })
       .then(setResult)
@@ -38,7 +47,7 @@ export default function Approvals({ user, data, notify }) {
         if (!c.signal.aborted) setLoading(false);
       });
     return () => c.abort();
-  }, [status, page, reload]);
+  }, [status, page, reload, filters, rangeError]);
   async function action(e) {
     e.preventDefault();
     setBusy(true);
@@ -68,6 +77,29 @@ export default function Approvals({ user, data, notify }) {
         title="Approvals"
         description="Review the work. Keep your team moving forward."
       />
+      <div className="approval-filters card">
+        <label>
+          Team member
+          <select aria-label="Team member" value={filters.userId} onChange={(e) => changeFilter("userId", e.target.value)}>
+            <option value="">All team members</option>
+            {data.users.map((person) => (
+              <option key={person.id} value={person.id}>{person.name} ({person.email})</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Start date
+          <input type="date" value={filters.start} onChange={(e) => changeFilter("start", e.target.value)} />
+        </label>
+        <label>
+          End date
+          <input type="date" value={filters.end} onChange={(e) => changeFilter("end", e.target.value)} />
+        </label>
+        <button className="button outline" onClick={() => { setFilters({ userId: "", start: "", end: "" }); setPage(1); }}>
+          Clear filters
+        </button>
+        <p className="form-note">Shows whole timesheet weeks overlapping these dates. Filters stay applied when you switch status.</p>
+      </div>
       <div className="tabs" role="group" aria-label="Timesheet status">
         {["Submitted", "Approved", "Rejected", "Draft", "Missing"].map((s) => (
           <button
@@ -83,8 +115,8 @@ export default function Approvals({ user, data, notify }) {
           </button>
         ))}
       </div>
-      {status === "Missing" ? (
-        <Compliance user={user} />
+      {rangeError ? <ErrorBox error={rangeError} /> : status === "Missing" ? (
+        <Compliance key={`${filters.userId}|${filters.start}|${filters.end}`} user={user} filters={filters} />
       ) : (
         <>
           <ErrorBox error={error} retry={() => setReload((x) => x + 1)} />
@@ -100,7 +132,7 @@ export default function Approvals({ user, data, notify }) {
                       : `${status} timesheets`}{" "}
                     <span className="count">{result?.total || 0}</span>
                   </h2>
-                  <span className="muted">All team members</span>
+                  <span className="muted">{filters.userId ? nameOf(data.users, filters.userId, "Selected team member") : "All team members"}</span>
                 </div>
                 {result?.items.length ? (
                   result.items.map((s) => {
