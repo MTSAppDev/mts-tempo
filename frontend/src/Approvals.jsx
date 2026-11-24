@@ -20,6 +20,7 @@ export default function Approvals({ user, data, notify }) {
     [error, setError] = useState(""),
     [reload, setReload] = useState(0),
     [modal, setModal] = useState(null),
+    [batch, setBatch] = useState(null),
     [busy, setBusy] = useState(false),
     [actionError, setActionError] = useState("");
   const [filters, setFilters] = useState({ userId: "", start: "", end: "" });
@@ -70,6 +71,28 @@ export default function Approvals({ user, data, notify }) {
   function open(sheet, action) {
     setActionError("");
     setModal({ sheet, action });
+  }
+  async function approveAll() {
+    if (busy) return;
+    setBusy(true);
+    const failures = [];
+    let approved = 0;
+    for (const sheet of batch.sheets) {
+      try {
+        await mutation(`/timesheets/${sheet._id}/approve`, { version: sheet.__v });
+        approved += 1;
+      } catch (error) {
+        failures.push(`${nameOf(data.users, sheet.user)} · Week of ${nice(sheet.weekStart)}: ${error.message}`);
+      }
+    }
+    setBusy(false);
+    setReload((n) => n + 1);
+    if (failures.length) {
+      setBatch({ ...batch, done: true, approved, failures });
+    } else {
+      setBatch(null);
+      notify(`${approved} timesheet${approved === 1 ? "" : "s"} approved.`);
+    }
   }
   return (
     <>
@@ -133,6 +156,16 @@ export default function Approvals({ user, data, notify }) {
                     <span className="count">{result?.total || 0}</span>
                   </h2>
                   <span className="muted">{filters.userId ? nameOf(data.users, filters.userId, "Selected team member") : "All team members"}</span>
+                  {status === "Submitted" && (
+                    <button
+                      className="button primary"
+                      disabled={busy || !result?.items.length}
+                      onClick={() => setBatch({ sheets: [...result.items] })}
+                    >
+                      <Check size={16} />
+                      Approve All
+                    </button>
+                  )}
                 </div>
                 {result?.items.length ? (
                   result.items.map((s) => {
@@ -239,6 +272,24 @@ export default function Approvals({ user, data, notify }) {
             )
           )}
         </>
+      )}
+      {batch && (
+        <Modal title={batch.done ? "Approval results" : "Approve all listed timesheets?"} busy={busy} close={() => setBatch(null)}>
+          {batch.done ? (
+            <>
+              <p>{batch.approved} approved. {batch.failures.length} could not be approved. Review the refreshed list before trying again.</p>
+              {batch.failures.map((message, index) => <ErrorBox key={index} error={message} />)}
+              <button className="button primary full-width" onClick={() => setBatch(null)}>Close</button>
+            </>
+          ) : (
+            <>
+              <p>Approve all {batch.sheets.length} submitted timesheets shown on this page? The current team member and date filters apply. Timesheets on other pages are not included.</p>
+              <button className="button primary full-width" disabled={busy} onClick={approveAll}>
+                {busy ? "Approving…" : "Confirm approval of all"}
+              </button>
+            </>
+          )}
+        </Modal>
       )}
       {modal && (
         <Modal
